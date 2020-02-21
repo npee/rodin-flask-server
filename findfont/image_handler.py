@@ -6,7 +6,7 @@ from findfont.testocr_dst import detect_text2, detect_text
 
 def convert_image(image):
     grayscale = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-    ret, img_result = cv.threshold(grayscale, 127, 255, cv.THRESH_BINARY)
+    ret, img_result = cv.threshold(grayscale, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
     return img_result
 
 
