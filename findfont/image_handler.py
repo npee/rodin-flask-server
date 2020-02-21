@@ -1,6 +1,7 @@
 import os
 import cv2 as cv
 import numpy as np
+import boto3
 from findfont.testocr_dst import detect_text2, detect_text
 
 
