@@ -9,10 +9,10 @@ import cv2
 # 텐서플로우 사용
 import tensorflow as tf
 import findfont.image_handler as ff
+# import boto3_test
 
 app = Flask(__name__)
 api = Api(app)
-
 
 def as_json(f):
     @wraps(f)
@@ -78,14 +78,25 @@ class ReceiveImageData(Resource):
             args = parser.parse_args()
             _imgFileStream = args['picture'].stream
 
+            # print(_imgFileStream[0])
+
             #cv2.imread랑 같음.
-            _encodedArrayImage = ff.load_image(_imgFileStream)
+
+            fileImage = ff.load_image_from_file("test.png")
+            # ff.show_image(fileImage)
+
+            # _encodedArrayImage = ff.load_image2("test.png")
+            _encodedArrayImage = ff.load_image_from_filestream(_imgFileStream)
+            # ff.show_image(_encodedArrayImage)
+            # ff.show_image(_encodedArrayImage)
             #############################
             # 매칭 알고리즘 수행 #
+
             image1, detected_text = ff.capture_image(_encodedArrayImage.copy())
+            # image1, detected_text = ff.capture_image(fileImage.copy())
             print("converted image : {}".format(image1))
-            # sort_value = ff.target_image(image1, detected_text)
-            sort_value = ff.target_image(image1, "가")
+            sort_value = ff.target_image(image1, detected_text)
+            # sort_value = ff.target_image(image1, "고")
             ##############################
 
             # 매칭 알고리즘 결과 return

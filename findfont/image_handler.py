@@ -1,6 +1,9 @@
 import os
 import cv2 as cv
 import numpy as np
+import boto3_test
+
+# Branch 이름 수정
 from findfont.testocr_dst import detect_text2, detect_text
 
 
@@ -32,8 +35,21 @@ def show_image(image):
 def capture_image(encodedImageArray):
     image1 = convert_image(encodedImageArray)
     image1 = remove_edge(image1)
+    # show_image(image1)
+    # detected_text = detect_text2(image1, save=False)
     detected_text = detect_text2(image1, save=False)
+    # detected_text = detect_text("test.png", save=False)
     # detect_text('./abc/가/yanoljaRegular_가.png')
+
+    '''
+    extract_path = "abc/{}".format(detected_text)
+    boto3_test.get_list_of_tables(root_path_or_bucket="rodin-font-image",
+                   # extract_path="abc/가",
+                    extract_path=extract_path,
+                   region_name="ap-northeast-2",
+                   file_extension=".png")
+    '''
+
     print("OCR : [", detected_text, "]")
     return image1, detected_text
 
@@ -47,7 +63,7 @@ def target_image(image1, detected_text):
     for file in os.listdir(dir_name):
         file_path = "/".join([dir_name, file])
         print("비교할 대상 : " + file_path)
-        image2 = load_image2(file_path)
+        image2 = load_image_from_file(file_path)
         image2 = convert_image(image2)
         image2 = remove_edge(image2)
         image2 = cv.resize(image2, dsize=(image1.shape[1], image1.shape[0]))
@@ -72,14 +88,15 @@ def matching_exe():
     # print(sort_value)
 
 
-def load_image(_imageFileStream):
-    image_array = np.asarray(bytearray(_imageFileStream.read()), dtype="uint8")
-    image = cv.imdecode(image_array, cv.IMREAD_COLOR)
+def load_image_from_filestream(_imageFileStream):
+    # image_array = np.asarray(bytearray(_imageFileStream.read()), dtype="uint8")
+    image_array = np.array(bytearray(_imageFileStream.read()), dtype="uint8")
+    image = cv.imdecode(image_array, cv.IMREAD_ANYCOLOR)
     print("Shape : {}".format(image.shape))
     return image
 
 
-def load_image2(file_path):
+def load_image_from_file(file_path):
     with open(file_path, 'rb') as f:
         barr = bytearray(f.read())
     barr = np.array(barr, dtype=np.uint8)
